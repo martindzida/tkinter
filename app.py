@@ -10,8 +10,22 @@ class MyApp:
         self.color_bg = '#bce0a8'
         self.x = 100
         self.y = 100
+        self.r_x = 100
+        self.r_y = 100
         self.objects = []
         self.obj = None
+        self.roads = []
+        self.road= None
+        self.dict_road = {
+            "x0": 100,
+            "y0": 100,
+            "x": 200,
+            "y": 200
+        }
+        self.status = 0
+        self.index = -1
+        self.dicts = 0
+        self.active = []
         self.action = ""
         self.parent = parent
         self.drawWidgets()
@@ -25,7 +39,8 @@ class MyApp:
         self.canvas.bind("<ButtonPress-1>", self.on_button_press)
         self.canvas.bind("<B1-Motion>", self.on_move_press)
         self.canvas.bind("<ButtonRelease-1>", self.on_button_release)
-        self.canvas.bind("<Control-Button1-1>", self.control_press)
+        self.canvas.bind("<ButtonPress-3>", self.button3_press)
+        self.canvas.bind("<B3-Motion>", self.button3_move_press)
 
         
         button_circle = Button(self.container, text="Přidat město", command=self.add_city)
@@ -45,8 +60,7 @@ class MyApp:
         filemenu.add_command(label='Konec',command=self.parent.destroy)     
         canvasmenu = Menu(menu)
         menu.add_cascade(label='Plátno',menu=canvasmenu)
-        canvasmenu.add_command(label='Vyčistit plátno',command=self.clear_canvas)
-        canvasmenu.add_command(label='Překreslit plátno',command=self.redraw_canvas)
+        canvasmenu.add_command(label='Vyčistit plátno',command=self.delete_objects)
         citymenu = Menu(menu)
         menu.add_cascade(label='Obec', menu=citymenu)
         citymenu.add_command(label='Počet obyvatel', command=self.city_population)
@@ -83,7 +97,15 @@ class MyApp:
         self.action = "new"
 
     def add_road(self):
-        print("Musíme to opravit :(")
+        self.road = Road(self.r_x, self.r_y, self.x, self.y)
+        self.roads.append(self.dict_road)
+        self.action = "new"
+        self.index += 1
+
+    def delete_objects(self):
+        self.canvas.delete("all")
+        self.objects = []
+        self.roads = []
 
     def clear_canvas(self):
         self.canvas.delete("all")
@@ -91,7 +113,14 @@ class MyApp:
     def redraw_canvas(self):     
         self.clear_canvas()
         for obj in self.objects:
-            obj.draw(self.canvas)   
+            obj.draw(self.canvas)
+        while self.dicts < len(self.roads):    
+            self.active = self.roads[self.index].values()
+            self.canvas.create_line(self.active[0], self.active[1], self.active[2], self.active[3], fill="#d1d106", width=10)
+            self.dicts += 1
+            self.index += 1
+        
+
 
     def info_box(self):
         messagebox.showinfo('Info', 'Převelice primitivní editor map')
@@ -122,16 +151,35 @@ class MyApp:
         if (self.action == "edit"):
             self.obj.x = cur_x - self.start_x + self.old_x
             self.obj.y = cur_y - self.start_y + self.old_y
-
+        
         self.redraw_canvas()
 
     def on_button_release(self, event):
         self.action = ""
 
-    def control_press(self, event):
-        self.first_x = self.canvas.canvasx(event.x)
-        self.first_y = self.canvas.canvasy(event.y)
-        print("...")
+    def button3_move_press(self, event):
+        cur_x = self.canvas.canvasx(event.x)
+        cur_y = self.canvas.canvasy(event.y)
+        if (self.action == "next"):
+            self.road.x = self.canvas.canvasx(event.x)
+            self.road.y = self.canvas.canvasx(event.y)
+            self.dict_road["x"] = self.canvas.canvasx(event.x)
+            self.dict_road["y"] = self.canvas.canvasx(event.y)
+            print(self.road.x)
+            print(self.road.y)
+            #print(self.roads[1].values())
+            self.redraw_canvas()
+
+    def button3_press(self, event):
+        self.r_x = self.canvas.canvasx(event.x)
+        self.r_y = self.canvas.canvasy(event.y)
+        if (self.action == "new"):
+            self.road.x0 = self.r_x
+            self.road.y0 = self.r_y
+            self.dict_road["x0"] = self.r_x
+            self.dict_road["y0"] = self.r_y
+            self.action = "next"
+        
 
 
 
