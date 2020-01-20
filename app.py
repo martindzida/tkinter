@@ -23,9 +23,9 @@ class MyApp:
             "y": 200
         }
         self.status = 0
-        self.index = -1
+        self.index = 0
         self.dicts = 0
-        self.active = []
+        self.active = {}
         self.action = ""
         self.parent = parent
         self.drawWidgets()
@@ -68,7 +68,6 @@ class MyApp:
         menu.add_cascade(label='Souřadnice', menu=coordinatesmenu)
         coordinatesmenu.add_command(label='Náhled', command=lambda: self.coordinates(screen_width, screen_height))
 
-        self.canvas.create_line(0,50,100,200, fill="#d1d106", width=10)
 
     def coordinates(self, screen_width, screen_height):
         self.rows = 9
@@ -100,7 +99,6 @@ class MyApp:
         self.road = Road(self.r_x, self.r_y, self.x, self.y)
         self.roads.append(self.dict_road)
         self.action = "new"
-        self.index += 1
 
     def delete_objects(self):
         self.canvas.delete("all")
@@ -115,8 +113,9 @@ class MyApp:
         for obj in self.objects:
             obj.draw(self.canvas)
         while self.dicts < len(self.roads):    
-            self.active = self.roads[self.index].values()
-            self.canvas.create_line(self.active[0], self.active[1], self.active[2], self.active[3], fill="#d1d106", width=10)
+            self.active = self.roads[self.index]
+            print(self.active)
+            self.canvas.create_line(self.active["x0"], self.active["y0"], self.active["x"], self.active["y"], fill="#d1d106", width=10)
             self.dicts += 1
             self.index += 1
         
@@ -151,6 +150,8 @@ class MyApp:
         if (self.action == "edit"):
             self.obj.x = cur_x - self.start_x + self.old_x
             self.obj.y = cur_y - self.start_y + self.old_y
+
+        print(self.objects)    
         
         self.redraw_canvas()
 
@@ -165,9 +166,6 @@ class MyApp:
             self.road.y = self.canvas.canvasx(event.y)
             self.dict_road["x"] = self.canvas.canvasx(event.x)
             self.dict_road["y"] = self.canvas.canvasx(event.y)
-            print(self.road.x)
-            print(self.road.y)
-            #print(self.roads[1].values())
             self.redraw_canvas()
 
     def button3_press(self, event):
