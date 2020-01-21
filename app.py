@@ -20,15 +20,6 @@ class MyApp:
         self.obj = None
         self.roads = []
         self.road= None
-        self.dict_road = {
-            "x0": 100,
-            "y0": 100,
-            "x": 200,
-            "y": 200
-        }
-        self.index = 0
-        self.dicts = 0
-        self.active = {}
         self.action = ""
         self.parent = parent
         self.drawWidgets()
@@ -101,7 +92,7 @@ class MyApp:
 
     def add_road(self):
         self.road = Road(self.r_x, self.r_y, self.x, self.y)
-        self.roads.append(self.dict_road)
+        self.roads.append(self.road)
         self.action = "new"
 
     def delete_objects(self):
@@ -116,14 +107,8 @@ class MyApp:
         self.clear_canvas()
         for obj in self.objects:
             obj.draw(self.canvas)
-        while self.dicts < len(self.roads):    
-            self.active = self.roads[self.index]
-            print(self.active)
-            self.canvas.create_line(self.active["x0"], self.active["y0"], self.active["x"], self.active["y"], fill="#d1d106", width=10)
-            self.dicts += 1
-            self.index += 1
-        
-
+        for road in self.roads:
+            road.draw(self.canvas, road.x0, road.y0, road.x, road.y)
 
     def info_box(self):
         messagebox.showinfo('Info', 'Převelice primitivní editor map')
@@ -165,8 +150,6 @@ class MyApp:
         if (self.action == "next"):
             self.road.x = self.canvas.canvasx(event.x)
             self.road.y = self.canvas.canvasx(event.y)
-            self.dict_road["x"] = self.canvas.canvasx(event.x)
-            self.dict_road["y"] = self.canvas.canvasx(event.y)
             self.redraw_canvas()
 
     def button3_press(self, event):
@@ -175,12 +158,9 @@ class MyApp:
         if (self.action == "new"):
             self.road.x0 = self.r_x
             self.road.y0 = self.r_y
-            self.dict_road["x0"] = self.r_x
-            self.dict_road["y0"] = self.r_y
             self.action = "next"
+            print(self.roads)
         
-
-
 
 root = Tk()
 myapp = MyApp(root)
