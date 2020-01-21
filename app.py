@@ -4,12 +4,16 @@ from tkinter import messagebox, colorchooser
 from grafika import *
 from dialogs import *
 
+#Kvůli nedostatku času a mým omezeným programátorským schopnostem jsem nestihl vyřešit problém s vykreslováním "silnic".
+#V redraw_canvas se v cyklu while neaktualizují souřadnice ve slovníku, tudíž se (ne)vykresluje čára o velikosti 0 px.
+
 class MyApp:
     def __init__(self, parent):
         self.color_fg = 'black'
         self.color_bg = '#bce0a8'
         self.x = 100
         self.y = 100
+        #souřadnice počátku čáry
         self.r_x = 100
         self.r_y = 100
         self.objects = []
@@ -22,7 +26,6 @@ class MyApp:
             "x": 200,
             "y": 200
         }
-        self.status = 0
         self.index = 0
         self.dicts = 0
         self.active = {}
@@ -68,7 +71,7 @@ class MyApp:
         menu.add_cascade(label='Souřadnice', menu=coordinatesmenu)
         coordinatesmenu.add_command(label='Náhled', command=lambda: self.coordinates(screen_width, screen_height))
 
-
+    #metoda pro vykreslení souřadnicové mřížky
     def coordinates(self, screen_width, screen_height):
         self.rows = 9
         self.cols = 16
@@ -85,6 +88,7 @@ class MyApp:
             self.x0 += self.dif
             self.cols -= 1      
 
+    #metoda pro nastavení počtu obyvatel -> velikosti "města"
     def city_population(self):
         dialog = CityDialog(self.parent, self.obj)
         self.parent.wait_window(dialog.top)
@@ -124,7 +128,6 @@ class MyApp:
     def info_box(self):
         messagebox.showinfo('Info', 'Převelice primitivní editor map')
    
-    # Mouse events
     
     def on_button_press(self, event):
         self.start_x = self.canvas.canvasx(event.x)
@@ -150,9 +153,7 @@ class MyApp:
         if (self.action == "edit"):
             self.obj.x = cur_x - self.start_x + self.old_x
             self.obj.y = cur_y - self.start_y + self.old_y
-
-        print(self.objects)    
-        
+   
         self.redraw_canvas()
 
     def on_button_release(self, event):

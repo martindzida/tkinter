@@ -38,6 +38,5 @@ class Road():
         self.color = "#d1d106"
         self.width = 10
 
-        def draw(self, canvas, r_x, r_y, x, y):
-            return canvas.create_line(r_x, r_y, x, y, fill="#d1d106", width=10)
-        
+    def draw(self, canvas, r_x, r_y, x, y):
+        return canvas.create_line(r_x, r_y, x, y, fill="#d1d106", width=10)

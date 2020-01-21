@@ -32,6 +32,7 @@ class CityDialog:
         button_cancel.pack(side=LEFT, padx=10, pady=5, fill=BOTH, expand=True)
 
     def ok(self, event=None):
+        #"město" nemůže mít více než 500 tisíc obyvatel, jelikož by zabíralo celkem hodně místa, takže bylo potřeba nějakého omezení
         if  float(self.spinbox_d.get()) < 501:
             self.shape.d = float(self.spinbox_d.get())
             self.top.destroy()
